@@ -1,0 +1,36 @@
+services:
+  mqtt_broker:
+    image: eclipse-mosquitto:latest
+    configs:
+      - source: mqtt_broker_config
+        target: /mosquitto/config/mosquitto.conf
+    ports:
+      - "1883:1883"  # MQTT port
+    networks:
+      - mqtt_network
+
+  influxdb:
+    image: influxdb:1.8
+    environment:
+      INFLUXDB_DB: "mydb"
+      INFLUXDB_HTTP_AUTH_ENABLED: "false"
+      INFLUXDB_RETENTION_POLICY: "autogen"
+      INFLUXDB_RETENTION_DURATION: "INF"  # Infinite retention duration
+    volumes:
+      - influxdb_data:/var/lib/influxdb
+    ports:
+      - "8086:8086"
+    networks:
+      - mqtt_network
+
+networks:
+  mqtt_network:
+    driver: overlay
+
+volumes:
+  influxdb_data:
+    driver: local
+
+configs:
+  mqtt_broker_config:
+    file: ./mosquitto.conf  # Your Mosquitto configuration file path

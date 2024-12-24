@@ -1,0 +1,2 @@
+mosquitto_pub -h localhost -p 1883 -t "test/topic" -m '{"BAT": 99, "HUMID": 40, "PRJ": "SCD", "TMP": 25.3, "STATUS": "OK", "timestamp": "2024-11-26T03:54:20+03:00"}'
+
