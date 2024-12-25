@@ -13,7 +13,5 @@ db_client.switch_database('mydb')
 
 def save_to_db(payload):
     print("Payload will be saved to db: ", payload)
-    json_array = []
-    json_array.append(payload)
-    db_client.write_points(json_array)
+    db_client.write_points(payload, time_precision='s')
     print("Saved to db!")
