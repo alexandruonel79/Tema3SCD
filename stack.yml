@@ -23,12 +23,24 @@ services:
     networks:
       - mqtt_network
 
+  grafana:
+    image: grafana/grafana
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./dashboards:/etc/grafana/provisioning/dashboards
+    ports:
+      - "3000:3000"
+    networks:
+      - mqtt_network
+
 networks:
   mqtt_network:
     driver: overlay
 
 volumes:
   influxdb_data:
+    driver: local
+  grafana-data:
     driver: local
 
 configs:

@@ -12,6 +12,6 @@ if not any(db['name'] == 'mydb' for db in databases):
 db_client.switch_database('mydb')
 
 def save_to_db(payload):
-    print("Payload will be saved to db: ", payload)
+    # print("Payload will be saved to db: ", payload)
     db_client.write_points(payload, time_precision='s')
     print("Saved to db!")
