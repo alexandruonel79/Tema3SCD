@@ -2,25 +2,30 @@ import paho.mqtt.client as mqtt
 import json
 import logging
 import os
+import sys
 from datetime import datetime
 from db_func import save_to_db
 from datetime import datetime, timezone, timedelta
 from dotenv import load_dotenv
 
-BROKER_HOST = "localhost"
+BROKER_HOST = "host.docker.internal"
 BROKER_PORT = 1883
 
 def setup_logging():
     load_dotenv()
     if os.getenv('DEBUG_DATA_FLOW') == 'true':
+        # print("Logging is enabled!")
         # Configure the logger to log INFO level and above
         logging.basicConfig(
             level=logging.INFO,  # Log only INFO and above
             format='%(asctime)s - %(message)s',  # Log message format with timestamp and message
-            datefmt='%Y-%m-%d %H:%M:%S'  # Define timestamp format without milliseconds
+            datefmt='%Y-%m-%d %H:%M:%S',
+            stream=sys.stdout  # Define timestamp format without milliseconds
         )
+        logger.info("Logging is enabled!")
     else:
         logger.disabled = True
+        # print("Logging is disabled!")
 
 def on_connect(client: mqtt.Client, userdata, flags, rc: int) -> None:
     if rc == mqtt.CONNACK_ACCEPTED:  # Use the built-in constant for connection success

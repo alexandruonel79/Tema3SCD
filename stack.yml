@@ -24,14 +24,39 @@ services:
       - mqtt_network
 
   grafana:
-    image: grafana/grafana
+    image: grafana/grafana:latest
+    environment:
+      - GF_SECURITY_ADMIN_USER=asistent
+      - GF_SECURITY_ADMIN_PASSWORD=grafanaSCD2024
     volumes:
       - grafana-data:/var/lib/grafana
       - ./dashboards:/etc/grafana/provisioning/dashboards
+      - ./datasources:/etc/grafana/provisioning/datasources
     ports:
       - "3000:3000"
     networks:
       - mqtt_network
+
+  adapter:
+    image: adapter_image
+    networks:
+      - mqtt_network
+    depends_on:
+      - mqtt_broker
+      - influxdb
+    env_file:
+      - .env
+    environment:
+    - PYTHONUNBUFFERED=1  # Disable output buffering
+
+  # mqtt_publisher:  # New service to send MQTT message
+  #   image: eclipse-mosquitto:latest
+  #   command: >
+  #     sh -c "mosquitto_pub -h mqtt_broker -p 1883 -t 'UPB/DEV16' -m '{\"BAT\": 16, \"HUMID\": 36, \"PRJ\": \"SCD\", \"TMP\": 305.3, \"STATUS\": \"OK\"}'"
+  #   networks:
+  #     - mqtt_network
+  #   depends_on:
+  #     - mqtt_broker  # Ensure mqtt_broker is up before publishing
 
 networks:
   mqtt_network:

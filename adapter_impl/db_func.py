@@ -2,7 +2,7 @@
 from influxdb import InfluxDBClient
 
 #Setup database
-db_client = InfluxDBClient('localhost', 8086, None, None)
+db_client = InfluxDBClient('influxdb', 8086, None, None)
 
 # Check if the database exists and create it if necessary
 databases = db_client.get_list_database()

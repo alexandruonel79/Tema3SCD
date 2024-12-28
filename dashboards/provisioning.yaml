@@ -1,0 +1,11 @@
+# https://blog.ukena.de/posts/2021/11/provisioning-grafana-dashboards-in-docker/
+apiVersion: 1
+providers:
+  - name: 'default'
+    orgId: 1
+    folder: ''
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 10
+    options:
+      path: /etc/grafana/provisioning/dashboards
