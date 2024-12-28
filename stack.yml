@@ -5,14 +5,14 @@ services:
       - source: mqtt_broker_config
         target: /mosquitto/config/mosquitto.conf
     ports:
-      - "1883:1883"  # MQTT port
+      - "1883:1883" # MQTT port
     networks:
       - mqtt_network
 
   influxdb:
     image: influxdb:1.8
     environment:
-      INFLUXDB_DB: "mydb"
+      INFLUXDB_DB: tema3
       INFLUXDB_HTTP_AUTH_ENABLED: "false"
       INFLUXDB_RETENTION_POLICY: "autogen"
       INFLUXDB_RETENTION_DURATION: "INF"  # Infinite retention duration
@@ -36,6 +36,8 @@ services:
       - "3000:3000"
     networks:
       - mqtt_network
+    depends_on:
+      - influxdb
 
   adapter:
     image: adapter_image
@@ -48,19 +50,29 @@ services:
       - .env
     environment:
     - PYTHONUNBUFFERED=1  # Disable output buffering
+    depends_on:
+      - mqtt_broker
+      - influxdb
+    command: sh -c "sleep 10 && python adapter.py"
 
-  # mqtt_publisher:  # New service to send MQTT message
-  #   image: eclipse-mosquitto:latest
-  #   command: >
-  #     sh -c "mosquitto_pub -h mqtt_broker -p 1883 -t 'UPB/DEV16' -m '{\"BAT\": 16, \"HUMID\": 36, \"PRJ\": \"SCD\", \"TMP\": 305.3, \"STATUS\": \"OK\"}'"
-  #   networks:
-  #     - mqtt_network
-  #   depends_on:
-  #     - mqtt_broker  # Ensure mqtt_broker is up before publishing
+  mqtt_publisher:
+    image: eclipse-mosquitto:latest
+    command: >
+      sh -c "
+        mosquitto_pub -h mqtt_broker -p 1883 -t 'UPB/DOCKER' -m '{\"BAT\": 16, \"HUMID\": 36, \"PRJ\": \"SCD\", \"TMP\": 305.3, \"STATUS\": \"OK\"}' && 
+        echo 'Message published successfully!' &&
+        tail -f /dev/null"
+    networks:
+      - mqtt_network
+    depends_on:
+      - mqtt_broker
+      - adapter
+
 
 networks:
   mqtt_network:
     driver: overlay
+    # name: mqtt_network
 
 volumes:
   influxdb_data:
