@@ -24,7 +24,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "ae80fndb0t98ge"
+        "uid": "P951FEA4DE68E13C5"
       },
       "fieldConfig": {
         "defaults": {
@@ -127,7 +127,7 @@
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT mean(\"data\") FROM /.*/ WHERE (\"location\"::tag = 'UPB') AND $timeFilter GROUP BY time(1s), \"device\", \"metric\" fill(null)",
+          "query": "SELECT mean(\"data\") FROM /.*/ WHERE (\"location\"::tag = 'UPB') AND \"metric\" != 'BAT'  AND $timeFilter GROUP BY time(1s), \"device\", \"metric\" fill(null)",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -160,7 +160,7 @@
     {
       "datasource": {
         "type": "influxdb",
-        "uid": "ae80fndb0t98ge"
+        "uid": "P951FEA4DE68E13C5"
       },
       "fieldConfig": {
         "defaults": {
@@ -235,6 +235,7 @@
     }
   ],
   "preload": false,
+  "refresh": "30s",
   "schemaVersion": 40,
   "tags": [],
   "templating": {
@@ -245,11 +246,20 @@
     "to": "now"
   },
   "timepicker": {
-    "refresh": "30s"
+    "refresh_intervals": [
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h"
+    ]
   },
   "timezone": "browser",
   "title": "UPB IoT Data",
   "uid": "de83abplozbb4a",
-  "version": 8,
+  "version": 1,
   "weekStart": ""
 }

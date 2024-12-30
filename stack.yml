@@ -7,7 +7,7 @@ services:
     ports:
       - "1883:1883" # MQTT port
     networks:
-      - mqtt_network
+      - broker_adapter
 
   influxdb:
     image: influxdb:1.8
@@ -21,7 +21,8 @@ services:
     ports:
       - "8086:8086"
     networks:
-      - mqtt_network
+      - db_adapter
+      - db_grafana
 
   grafana:
     image: grafana/grafana:latest
@@ -35,14 +36,15 @@ services:
     ports:
       - "3000:3000"
     networks:
-      - mqtt_network
+      - db_grafana
     depends_on:
       - influxdb
 
   adapter:
     image: adapter_image
     networks:
-      - mqtt_network
+      - broker_adapter
+      - db_adapter
     depends_on:
       - mqtt_broker
       - influxdb
@@ -55,24 +57,13 @@ services:
       - influxdb
     command: sh -c "sleep 10 && python adapter.py"
 
-  mqtt_publisher:
-    image: eclipse-mosquitto:latest
-    command: >
-      sh -c "
-        mosquitto_pub -h mqtt_broker -p 1883 -t 'UPB/DOCKER' -m '{\"BAT\": 16, \"HUMID\": 36, \"PRJ\": \"SCD\", \"TMP\": 305.3, \"STATUS\": \"OK\"}' && 
-        echo 'Message published successfully!' &&
-        tail -f /dev/null"
-    networks:
-      - mqtt_network
-    depends_on:
-      - mqtt_broker
-      - adapter
-
-
 networks:
-  mqtt_network:
+  broker_adapter:
     driver: overlay
-    # name: mqtt_network
+  db_adapter:
+    driver: overlay
+  db_grafana:
+    driver: overlay
 
 volumes:
   influxdb_data:

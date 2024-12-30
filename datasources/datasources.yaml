@@ -4,6 +4,6 @@ datasources:
 - name: InfluxDB
   type: influxdb
   access: proxy
-  database: mydb
+  database: tema3
   url: http://influxdb:8086
   isDefault: true

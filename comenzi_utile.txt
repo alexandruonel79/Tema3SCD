@@ -1,1 +1,12 @@
-mosquitto_pub -h localhost -p 1883 -t "test/topic" -m '{"BAT": 99, "HUMID": 40, "PRJ": "SCD", "TMP": 25.3, "STATUS": "OK", "timestamp": "2024-11-26T03:54:20+03:00"}'
+mosquitto_pub -h localhost -p 1883 -t "UPB/DEV0" -m '{"BAT": 99, "HUMID": 40, "PRJ": "SCD", "TMP": 25.3, "STATUS": "OK", "timestamp": "2024-12-30T12:54:20+02:00"}'
+
+
+SELECT 
+  last("data") AS "Current", 
+  min("data") AS "Min", 
+  max("data") AS "Max", 
+  mean("data") AS "Avg"
+FROM /.*/ 
+WHERE "metric" = 'BAT' AND $timeFilter
+GROUP BY "device"
+
