@@ -80,7 +80,7 @@ def on_message(client: mqtt.Client, userdata, msg: mqtt.MQTTMessage) -> None:
                     },
                 "time": timestamp,
                 "fields": {
-                    "data": data
+                    "data": float(data)
                 }
             }
             json_payload.append(data)

@@ -1,5 +1,4 @@
-mosquitto_pub -h localhost -p 1883 -t "UPB/DEV0" -m '{"BAT": 99, "HUMID": 40, "PRJ": "SCD", "TMP": 25.3, "STATUS": "OK", "timestamp": "2024-12-30T12:54:20+02:00"}'
-
+ mosquitto_pub -h localhost -p 1883 -t "UPB/DEV0" -m '{"BAT": 60, "HUMID": 60, "PRJ": "SCD", "TMP": 40.3, "STATUS": "OK", "timestamp": "2025-01-03T22:11:20+02:00"}'
 
 SELECT 
   last("data") AS "Current", 
@@ -10,3 +9,5 @@ FROM /.*/
 WHERE "metric" = 'BAT' AND $timeFilter
 GROUP BY "device"
 
+// inainte de modif
+SELECT mean("data") FROM /.*/ WHERE ("location"::tag = 'UPB') AND $timeFilter GROUP BY time(1s), "device", "metric" fill(null)
