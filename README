@@ -1,5 +1,8 @@
 Onel Alexandru Gabriel 342C5
 
+    Rulare: ./run.sh -> se ocupa de tot 
+    Stop: ./stop.sh -> opreste stack ul si sterge volumele
+
     Am inceput implementarea temei in ordinea specificata in pdf. Astfel prima componenta
 de care m am ocupat a fost broker ul MQTT. Am ales sa merg cu eclipse-mosquitto pentru
 ca l am mai folosit. Configurarea brokerului nu a fost complicata, fiind necesar un singur
@@ -27,7 +30,11 @@ baza de date influxdb si la dashboards am pus JSON urile cu dashboard urile crea
 diferit putin fata de linux. Eram nevoit sa pun `BROKER_HOST = "host.docker.internal"`. Dupa ce m am mutat
 pe linux, s a rezolvat.
 
-Feedback: A fost o tema interesanta, prezentand un concept diferit de baza de date si grafana. Auzisem de 
+    Pentru testare, am testat manual cu mosquitto_pub, ulterior mi am facut un script de bash simplu, care ia data
+curenta si scade random timp din acea data. L am spart in 3 for uri ca sa pot surprinde mai complet graficele 
+generate in grafana.
+
+Feedback: A fost o tema interesanta, prezentand un concept diferit de baze de date si grafana. Auzisem de 
 multe ori de grafana, si voiam sa il testez.
 
 Resurse utile:

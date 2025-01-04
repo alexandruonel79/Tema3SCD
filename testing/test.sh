@@ -13,7 +13,6 @@ for i in {1..10}; do
   random_minutes=$(shuf -i 0-59 -n 1)
 
   modified_timestamp=$(date -u -d "$original_timestamp - $random_hours hours - $random_minutes minutes" +"%Y-%m-%dT%H:%M:%S+02:00")
-  echo "Current timestamp: $modified_timestamp"
 
   bat=$(shuf -i 50-100 -n 1)
   humid=$(shuf -i 80-100 -n 1)
@@ -23,7 +22,6 @@ for i in {1..10}; do
 
   echo "Publishing message to topic $topic: $message"
   mosquitto_pub -h "$host" -p "$port" -t "$topic" -m "$message"
-
   sleep 1
 done
 
@@ -34,6 +32,7 @@ for i in {0..5}; do
   message='{"BAT": 100, "HUMID": 100, "PRJ": "SCD", "TMP": 100, "STATUS": "OK"}'
   echo "Publishing message to topic $topic: $message"
   mosquitto_pub -h "$host" -p "$port" -t "$topic" -m "$message"
+  sleep 1
 done
 
 # LAST 48 HOURS
@@ -46,5 +45,6 @@ for i in {0..5}; do
   message='{"BAT": 100, "HUMID": 100, "PRJ": "SCD", "TMP": 100, "STATUS": "OK", "timestamp": "'$modified_timestamp'"}'
   echo "Publishing message to topic $topic: $message"
   mosquitto_pub -h "$host" -p "$port" -t "$topic" -m "$message"
+  sleep 1
 done
 
