@@ -1,4 +1,3 @@
-# https://blog.ukena.de/posts/2021/11/provisioning-grafana-dashboards-in-docker/
 apiVersion: 1
 providers:
   - name: 'default'

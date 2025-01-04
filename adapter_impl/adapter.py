@@ -8,11 +8,10 @@ from db_func import save_to_db
 from datetime import datetime, timezone, timedelta
 from dotenv import load_dotenv
 
-# problema pe windows doar, pe linux merge...
-# BROKER_HOST = "host.docker.internal"
 logger = logging.getLogger("Info_Logger")
 
 def setup_logging():
+    # if the env variable is set, enable logging
     if os.getenv('DEBUG_DATA_FLOW') == 'true':
         logging.basicConfig(
             level=logging.INFO,
@@ -26,70 +25,88 @@ def setup_logging():
 
 def on_connect(client: mqtt.Client, userdata, flags, rc: int) -> None:
     if rc == mqtt.CONNACK_ACCEPTED:
-        print("Conectat la broker!")
+        logger.info("Broker is connected!")
         client.subscribe('#')
     else:
-        print(f"Eroare la conectare: {rc}")
+        logger.info(f"Error connecting to broker: {rc}")
 
 def is_valid_topic(topic):
+    # it should contain two words, separated only by a '/'
     parts = topic.split('/')
     return len(parts) == 2 and all(parts)
 
 def get_timestamp(payload):
+    # check if the payload already contains a timestamp
     if payload.get('timestamp'):
         logger.info("Data timestamp is: %s", payload['timestamp'])
         return payload['timestamp']
+    # otherwise create it now
     else:
         timezone_offset = timedelta(hours=2)
-        current_time = datetime.now(timezone(timezone_offset))
-        formatted_timestamp = current_time.isoformat()
+        curr_time = datetime.now(timezone(timezone_offset))
+        timestamp = curr_time.isoformat()
         logger.info("Data timestamp is: NOW")
-        return formatted_timestamp
+        return timestamp
 
 def clean_payload(old_payload):
     new_payload = {}
     for key, value in old_payload.items():
+        # if its a number, add it in the new payload
         if isinstance(value, (int, float)):
             new_payload[key] = value
     
     return new_payload
 
-def on_message(client: mqtt.Client, userdata, msg: mqtt.MQTTMessage) -> None:
-    logger.info("Received a message by topic [%s]", msg.topic)
+def extract_location_device(message):
+    location = message.topic.split('/')[0]
+    device = message.topic.split('/')[1]
+    return location, device
 
+def create_db_entries(location, device, payload, timestamp):
+    json_payload = []
+    # use all the data's as metrics for efficiency in influxdb
+    for metric, data in payload.items():
+        logger.info("%s.%s.%s %s", location, device, metric, data)
+        db_entry = {
+            "measurement": f"{location}_{device}_{metric}",
+            "tags": {
+                "location": location,
+                "device": device,
+                "metric": metric
+                },
+            "time": timestamp,
+            "fields": {
+                "data": float(data)
+            }
+        }
+        json_payload.append(db_entry)
+        
+    return json_payload
+
+
+def on_message(client: mqtt.Client, userdata, msg: mqtt.MQTTMessage) -> None:
+    # check if the topic is valid
     if not is_valid_topic(msg.topic):
-        print("Invalid topic!")
+        logger.info("Invalid topic format! It needs to be location/device")
         return
 
+    logger.info("Received a message by topic [%s]", msg.topic)
+    # the body must be a JSON
     try:
         payload = json.loads(msg.payload.decode())
-        json_payload = []
-        location = msg.topic.split('/')[0]
-        device = msg.topic.split('/')[1]
-        timestamp = get_timestamp(payload)
-        payload = clean_payload(payload)
-
-        for metric, data in payload.items():
-            logger.info("%s.%s.%s %s", location, device, metric, data)
-            data = {
-                "measurement": f"{location}_{device}_{metric}",
-                "tags": {
-                    "location": location,
-                    "device": device,
-                    "metric": metric
-                    },
-                "time": timestamp,
-                "fields": {
-                    "data": float(data)
-                }
-            }
-            json_payload.append(data)
-        save_to_db(json_payload)
-
     except json.JSONDecodeError:
-        print("Mesajul nu este JSON!")
+        logger.info("The body is not a JSON!")
         return
 
+    location, device = extract_location_device(msg)
+    # get the timestamp
+    timestamp = get_timestamp(payload)
+    # remove the unnecessary fields, and return a new payload
+    payload = clean_payload(payload)
+    # create the db entries
+    json_payload = create_db_entries(location, device, payload, timestamp)
+    # save the entries in the database
+    save_to_db(json_payload)
 
 def main():
     load_dotenv()

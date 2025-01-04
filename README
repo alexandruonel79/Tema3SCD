@@ -1,0 +1,35 @@
+Onel Alexandru Gabriel 342C5
+
+    Am inceput implementarea temei in ordinea specificata in pdf. Astfel prima componenta
+de care m am ocupat a fost broker ul MQTT. Am ales sa merg cu eclipse-mosquitto pentru
+ca l am mai folosit. Configurarea brokerului nu a fost complicata, fiind necesar un singur
+fisier de configurare. (mosquitto.conf)
+    Urmatorul pas a fost sa configurez influxdb. Am respectat cerintele impuse, si am
+dezactivat autentificarea. Pentru configurare, am reusit direct in stack astfel:
+    INFLUXDB_HTTP_AUTH_ENABLED: "false"
+    INFLUXDB_RETENTION_POLICY: "autogen"
+    INFLUXDB_RETENTION_DURATION: "INF"
+Ideea mea a fost sa folosesc o versiune de influxdb in care configurarea de autentificare 
+direct in stack este posibila. Astfel m am decis sa folosesc versiunea 1.8.
+    Dupa ce baza de date si brokerul erau functonale, am inceput sa scriu codul in python. S a 
+asemanat foarte mult cu laboratorul, deci aveam un schelet deja. Pentru structura datelor salvate
+in baza de date, m am decis ca numele measurement ului sa fie compus din LOCATIE_DEVICE_METRIC. Tag urile
+sunt utile pentru query uri, deci eficienta, astfel am adaugat toate informatiile in cate un tag: location,
+device, metric. In fields, am salvat doar valoarea efectiva(ex 20.3, 15.4). Am folosit loggerul din python
+pentru afisare de mesaje. Am fost nevoit sa dau disable la PYTHONBUFFERED, astfel print urile devin afisate
+fara buffering, deci scade eficienta.
+    Ultimul pas a fost configurarea grafana. Am reusit sa il fac sa ia automat dashboard urile create, salvandu le 
+in format JSON. Am reusit sa implementez dashboard ul cu baterii corect, dar nu am reusit pe cel cu UPB IOT (nu mi a 
+iesit tabelul sa arate ca in poza, graficul da). Pentru configurare am avut nevoie sa setez: la datasources mi am adaugat 
+baza de date influxdb si la dashboards am pus JSON urile cu dashboard urile create.
+
+    O problema pe care am pierdut mult timp, este faptul ca lucram pe windows initial si localhost este
+diferit putin fata de linux. Eram nevoit sa pun `BROKER_HOST = "host.docker.internal"`. Dupa ce m am mutat
+pe linux, s a rezolvat.
+
+Feedback: A fost o tema interesanta, prezentand un concept diferit de baza de date si grafana. Auzisem de 
+multe ori de grafana, si voiam sa il testez.
+
+Resurse utile:
+    https://blog.ukena.de/posts/2021/11/provisioning-grafana-dashboards-in-docker/
+    https://www.youtube.com/watch?v=49hKs_H5Xf0&t=25s&ab_channel=DevOpsJourney

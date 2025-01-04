@@ -1,4 +1,4 @@
- mosquitto_pub -h localhost -p 1883 -t "UPB/DEV0" -m '{"BAT": 60, "HUMID": 60, "PRJ": "SCD", "TMP": 40.3, "STATUS": "OK", "timestamp": "2025-01-03T22:11:20+02:00"}'
+ mosquitto_pub -h localhost -p 1883 -t "UPB/DEV0" -m '{"BAT": 60, "HUMID": 60, "PRJ": "SCD", "TMP": 40.3, "STATUS": "OK", "timestamp": "2025-01-04T13:11:20+02:00"}'
 
 SELECT 
   last("data") AS "Current", 
