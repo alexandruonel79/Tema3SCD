@@ -1,6 +1,5 @@
 Onel Alexandru Gabriel 342C5
 
-    Se presupune ca exista deja un swarm initiat.
     Rulare: ./run.sh -> se ocupa de tot 
     Stop: ./stop.sh -> opreste stack ul si sterge volumele
 
@@ -14,7 +13,8 @@ dezactivat autentificarea. Pentru configurare, am reusit direct in stack astfel:
     INFLUXDB_RETENTION_POLICY: "autogen"
     INFLUXDB_RETENTION_DURATION: "INF"
 Ideea mea a fost sa folosesc o versiune de influxdb in care configurarea de autentificare 
-direct in stack este posibila. Astfel m am decis sa folosesc versiunea 1.8.
+direct in stack este posibila. Astfel m am decis sa folosesc versiunea 1.8, aceasta optiune fiind
+disponibila in orice versiune 1.x. 
     Dupa ce baza de date si brokerul erau functonale, am inceput sa scriu codul in python. S a 
 asemanat foarte mult cu laboratorul, deci aveam un schelet deja. Pentru structura datelor salvate
 in baza de date, m am decis ca numele measurement ului sa fie compus din LOCATIE_DEVICE_METRIC. Tag urile
@@ -33,7 +33,7 @@ pe linux, s a rezolvat.
 
     Pentru testare, am testat manual cu mosquitto_pub, ulterior mi am facut un script de bash, modular,
 care genereaza random ore si minute, si scade din data curenta pentru a popula cu date pentru grafana.
-Am facut sa genereze in ultimele 6 ore, apoi ultimele 48 de ore si in final, fara timestamp, pentru a testa
+Am facut sa genereze in ultimele 6 ore, apoi ultimele 48 de ore, si in final, fara timestamp, pentru a testa
 timestampul curent.
 
 Feedback: A fost o tema interesanta, prezentand un concept diferit de baze de date si grafana. Auzisem de 
@@ -42,3 +42,4 @@ multe ori de grafana, si voiam sa il testez.
 Resurse utile:
     https://blog.ukena.de/posts/2021/11/provisioning-grafana-dashboards-in-docker/
     https://www.youtube.com/watch?v=49hKs_H5Xf0&t=25s&ab_channel=DevOpsJourney
+    https://community.influxdata.com/t/docker-container-healtcheck/23930/2
