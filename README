@@ -30,9 +30,10 @@ baza de date influxdb si la dashboards am pus JSON urile cu dashboard urile crea
 diferit putin fata de linux. Eram nevoit sa pun `BROKER_HOST = "host.docker.internal"`. Dupa ce m am mutat
 pe linux, s a rezolvat.
 
-    Pentru testare, am testat manual cu mosquitto_pub, ulterior mi am facut un script de bash simplu, care ia data
-curenta si scade random timp din acea data. L am spart in 3 for uri ca sa pot surprinde mai complet graficele 
-generate in grafana.
+    Pentru testare, am testat manual cu mosquitto_pub, ulterior mi am facut un script de bash, modular,
+care genereaza random ore si minute, si scade din data curenta pentru a popula cu date pentru grafana.
+Am facut sa genereze in ultimele 6 ore, apoi ultimele 48 de ore si in final, fara timestamp, pentru a testa
+timestampul curent.
 
 Feedback: A fost o tema interesanta, prezentand un concept diferit de baze de date si grafana. Auzisem de 
 multe ori de grafana, si voiam sa il testez.
