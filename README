@@ -1,5 +1,6 @@
 Onel Alexandru Gabriel 342C5
 
+    Se presupune ca exista deja un swarm initiat.
     Rulare: ./run.sh -> se ocupa de tot 
     Stop: ./stop.sh -> opreste stack ul si sterge volumele
 
