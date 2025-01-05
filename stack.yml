@@ -53,9 +53,6 @@ services:
     networks:
       - broker_adapter
       - db_adapter
-    # depends_on:
-    #   - mqtt_broker
-    #   - influxdb
     depends_on:
       mqtt_broker:
         condition: service_healthy
